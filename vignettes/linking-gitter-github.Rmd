@@ -1,0 +1,42 @@
+---
+title: "Linking Gitter and Github"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Linking Gitter and Github}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  eval=F,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(gitterhub)
+```
+
+Setup service
+```{r}
+gs <- gitterService()
+```
+
+list groups
+```{r}
+myGroups <- gs$list_groups()
+myGroups_df <- gs$list_groupsAsDataframe()
+```
+
+list rooms
+```{r}
+myRooms <- gs$list_roomsUnderAGroupAsDataFrame(groupId="593fd022d73408ce4f66f764")
+```
+
+list users
+```{r}
+roomUsers <- gs$list_usersInARoomAsDataFrame("5f60610fd73408ce4feee869")
+```
+
