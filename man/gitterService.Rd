@@ -2,7 +2,7 @@
 % Please edit documentation in R/gitter.R
 \name{gitterService}
 \alias{gitterService}
-\title{create gitter service}
+\title{Create gitter service}
 \usage{
 gitterService()
 }
@@ -10,7 +10,7 @@ gitterService()
 
 }
 \description{
-create gitter service
+The service contains list_groups/list_groupsAsDataframe, list_roomsUnderAGroup/list_roomsUnderAGroupAsDataFrame(groupId), list_usersInARoom/list_usersInARoomAsDataFrame(roomId)
 }
 \examples{
 gs <- gitterService()

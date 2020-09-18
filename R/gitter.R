@@ -83,6 +83,7 @@ list_roomsUnderAGroupAsDataFrame <- function(groupId){
              ~{.x[c("id","name")]})
 }
 
+
 gitter_apiFunctional <- function(postingMessage){
   split_postingMessage=stringr::str_split(postingMessage,"\\s")
   VERB=split_postingMessage[[1]][[1]]
