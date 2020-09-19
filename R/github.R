@@ -11,12 +11,13 @@
 #' gs$get_oneRepoInfo(owner = "tpemartin", repo="109-1-inclass-practice")
 #' gs$get_repoForks(owner = "tpemartin", repo="109-1-inclass-practice")
 githubService <- function(){
-
+  require("httr")
   list(
     get_userInfo=get_user(),
     get_allRepos=list_reposOfAUser,
     get_oneRepoInfo=get_repoInfo,
-    get_repoForks=get_repoForks
+    get_repoForks=get_repoForks,
+    choose_courseRepoFromLatest30=choose_courseRepoFromLatest30
 
   )
 
@@ -52,10 +53,14 @@ rootEndpoints <- function(platformName){
   switch(
     platformName,
     "github"="https://api.github.com",
-    "gitter"="https://api.gitter.im"
+    "gitter"="https://api.gitter.im",
+    "hypothesis"="https://hypothes.is/api/"
   )
 
 }
+
+"GET /repos/:owner/:repo/issues"
+
 
 github_apiFunctionalOnePage <- function(postingMessage){
   split_postingMessage=stringr::str_split(postingMessage,"\\s")
@@ -81,7 +86,24 @@ github_apiFunctionalOnePage <- function(postingMessage){
     content(response)
   }
 }
-
+choose_courseRepoFromLatest30 <- function(username){
+  list_latest30ReposOfAUser <- list_reposOfAUser_apiFun(username)
+  list_latest30ReposOfAUser(
+    query=list(
+      type="owner",
+      sort="created",
+      direction="desc"
+    )
+  ) -> myRepos
+  purrr::map_chr(
+    myRepos,
+    ~.x$full_name
+  ) -> repoNames
+  paste0(seq_along(repoNames),": ",repoNames,"\n") -> items
+  message(items)
+  choice <- as.integer(readline("請選數字："))
+  courseRepo <- myRepos[[choice]]
+}
 get_multiplePages <- function(apiFun){
   allpages <- newpage <- apiFun(query=list(page=1, per_page=100))
   count=0; max_count=30
