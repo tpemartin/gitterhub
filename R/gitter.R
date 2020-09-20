@@ -153,8 +153,6 @@ browseMessage <- function(messageId){
 }
 get_1message <- function(roomId, messageId){
 
-  roomId=courseRmId
-
   glue::glue("GET https://api.gitter.im/v1/rooms/{roomId}/chatMessages/{messageId}") -> postingMessage
   apifun <- gitter_apiFunctional(postingMessage)
   apifun()
