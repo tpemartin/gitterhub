@@ -34,7 +34,9 @@ gitterService <- function(){
       list_roomsUnderAGroupAsDataFrame,
     list_usersInARoom=list_usersInARoom,
     list_usersInARoomAsDataFrame=list_usersInARoomAsDataFrame,
-    list_messagesInRoom100limit=list_messagesInRoom100limit
+    list_messagesInRoom100limit=list_messagesInRoom100limit,
+    get_threadMessagesInRoomFromAMessage=get_threadMessagesInRoomFromAMessage,
+    search_messagesInRoom100limit=search_messagesInRoom100limit
   )
 }
 
@@ -119,6 +121,43 @@ list_messagesInRoom100limit <- function(roomId){
     )
   )
 
+}
+search_messagesInRoom100limit <- function(roomId, searchKeyword){
+  # roomId="5f60610fd73408ce4feee869"
+  postingMessage=glue::glue("GET /v1/rooms/{roomId}/chatMessages")
+  list_messagesInRoom_apiFun <- gitter_apiFunctional(postingMessage)
+  list_messsages <- list_messagesInRoom_apiFun(
+    query=list(
+      limit=100,
+      q=searchKeyword
+    )
+  )
+
+}
+
+get_threadMessagesInRoomFromAMessage <- function(roomId, messageId){
+  postingMessage=glue::glue("GET /v1/rooms/{roomId}/chatMessages/{messageId}/thread")
+  list_messagesInRoom_apiFun <- gitter_apiFunctional(postingMessage)
+  list_messsages <- list_messagesInRoom_apiFun(
+    query=list(
+      limit=100
+    )
+  )
+
+}
+
+browseMessage <- function(messageId){
+  browseURL(
+  glue::glue("https://gitter.im/gitter/api?at={messageId}")
+  )
+}
+get_1message <- function(roomId, messageId){
+
+  roomId=courseRmId
+
+  glue::glue("GET https://api.gitter.im/v1/rooms/{roomId}/chatMessages/{messageId}") -> postingMessage
+  apifun <- gitter_apiFunctional(postingMessage)
+  apifun()
 }
 gitter_apiFunctional <- function(postingMessage){
   split_postingMessage=stringr::str_split(postingMessage,"\\s")
