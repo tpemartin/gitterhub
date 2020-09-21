@@ -61,16 +61,13 @@ rootEndpoints <- function(platformName){
 
 }
 
-"GET /repos/:owner/:repo/issues"
-
-
 github_apiFunctionalOnePage <- function(postingMessage){
   split_postingMessage=stringr::str_split(postingMessage,"\\s")
   VERB=split_postingMessage[[1]][[1]]
   path=split_postingMessage[[1]][[2]]
   VERB=as.name(VERB)
   require("httr")
-  endpoint=gitterhub:::rootEndpoints("github")
+  endpoint=rootEndpoints("github")
   function(...){
     requestExpr=rlang::quo({
       loadNamespace("httr")
@@ -121,11 +118,11 @@ get_multiplePages <- function(apiFun){
   }
   allpages
 }
-filename="README.md"
-owner="tpemartin"
-repo="109-1-inclass-practice"
-path="hello.txt"
-commitMessage="test"
+# filename="README.md"
+# owner="tpemartin"
+# repo="109-1-inclass-practice"
+# path="hello.txt"
+# commitMessage="test"
 
 upload2fork <- function(owner,repo,path,commitMessage, filename){
   postingMessage = glue::glue("PUT /repos/{owner}/{repo}/contents/{path}")
@@ -193,6 +190,6 @@ create_issue <- function(owner, repo, .title, .body, ...){
       ), auto_unbox = T
     ))
 }
-.title="test gitter-repost"
-.body="[![image.png](https://files.gitter.im/5f60610fd73408ce4feee869/vSEg/thumb/image.png)](https://files.gitter.im/5f60610fd73408ce4feee869/vSEg/image.png) Your name is: library(econDS); setup() \n 老師 請問我名字打錯的話 有方法可以再重打一次嗎 \n"
-create_issue(owner,repo, .title, .body, labels=list("gitter"))
+# .title="test gitter-repost"
+# .body="[![image.png](https://files.gitter.im/5f60610fd73408ce4feee869/vSEg/thumb/image.png)](https://files.gitter.im/5f60610fd73408ce4feee869/vSEg/image.png) Your name is: library(econDS); setup() \n 老師 請問我名字打錯的話 有方法可以再重打一次嗎 \n"
+# create_issue(owner,repo, .title, .body, labels=list("gitter"))
