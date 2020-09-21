@@ -36,7 +36,8 @@ gitterService <- function(){
     list_usersInARoomAsDataFrame=list_usersInARoomAsDataFrame,
     list_messagesInRoom100limit=list_messagesInRoom100limit,
     get_threadMessagesInRoomFromAMessage=get_threadMessagesInRoomFromAMessage,
-    search_messagesInRoom100limit=search_messagesInRoom100limit
+    search_messagesInRoom100limit=search_messagesInRoom100limit,
+    list_compactMessagesInRoom100limit=list_compactMessagesInRoom100limit
   )
 }
 
@@ -157,6 +158,7 @@ get_1message <- function(roomId, messageId){
   apifun <- gitter_apiFunctional(postingMessage)
   apifun()
 }
+
 gitter_apiFunctional <- function(postingMessage){
   split_postingMessage=stringr::str_split(postingMessage,"\\s")
   VERB=split_postingMessage[[1]][[1]]
@@ -180,4 +182,76 @@ gitter_apiFunctional <- function(postingMessage){
 
     content(response)
   }
+}
+
+gen_groupIndex <- function(userIds){
+  count=0;
+  previousId="0"
+  group_index <- c()
+  for(.x in seq_along(userIds)){
+    count <- ifelse(userIds[[.x]]!=previousId,
+                    count+1, count)
+    previousId=userIds[[.x]]
+    group_index <- c(
+      group_index,
+      count
+    )
+  }
+  group_index
+}
+
+compact_messages <- function(originalMSGs){
+  # 同一人連發的訊息會有不同messageId, 但實際上是同一段對話的一小部份
+  library(dplyr)
+  originalMSGs %>%
+    purrr::map_chr(
+      ~{.x$fromUser$id}
+    ) %>%
+    unlist() -> userIds
+
+  group_index <- gen_groupIndex(userIds)
+  group_index_unique <- unique(group_index)
+  validPosts <- vector("list", length(group_index_unique))
+  idnames <- vector("list", length(group_index_unique))
+  messageIds <- vector("list", length(group_index_unique))
+  textContent <- vector("character", length(group_index_unique))
+  for(.x in group_index_unique){
+    whichBelong2Index <- which(group_index==group_index_unique[[.x]])
+    validPosts[[.x]] <- originalMSGs[whichBelong2Index]
+    validPosts[[.x]] %>%
+      purrr::map(~.x$text) %>%
+      purrr::reduce(paste, collpase="\n") -> textContent[[.x]]
+    idnames[[.x]] <- originalMSGs[[whichBelong2Index[[1]]]]$fromUser[c("id", "username","displayName","avatarUrlSmall")]
+    messageIds[[.x]] <- purrr::map_chr(originalMSGs[whichBelong2Index], ~.x$id)
+  }
+  tibble(
+    userId=purrr::map_chr(idnames, ~.x[[1]]),
+    username=purrr::map_chr(idnames, ~.x[[2]]),
+    displayName=purrr::map_chr(idnames, ~.x[[3]]),
+    avatar=purrr::map_chr(idnames, ~.x[[4]]),
+    messageIds=messageIds,
+    text=textContent,
+    messages=validPosts
+  ) -> compactMessage
+  compactMessage
+}
+
+# forEach_getMessageId <-function(detail){
+#   purrr::map(
+#     detail,
+#     ~purrr::pluck(.x,"id")
+#   )
+# }
+# forEach_getMessageId <-function(detail){
+#   purrr::map(
+#     detail,
+#     ~purrr::pluck(.x,"id")
+#   )
+# }
+list_compactMessagesInRoom100limit <- function(roomId){
+  msgs <- list_messagesInRoom100limit(roomId)
+
+  msgsCompact <- compact_messages(msgs)
+
+  msgsCompact
 }
