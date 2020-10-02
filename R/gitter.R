@@ -112,14 +112,13 @@ list_roomsUnderAGroupAsDataFrame <- function(groupId){
              ~{.x[c("id","name")]})
 }
 
-list_messagesInRoom100limit <- function(roomId){
+list_messagesInRoom100limit <- function(roomId,...){
+  queryList <- list(limit=100,...)
   # roomId="5f60610fd73408ce4feee869"
   postingMessage=glue::glue("GET /v1/rooms/{roomId}/chatMessages")
   list_messagesInRoom_apiFun <- gitter_apiFunctional(postingMessage)
   list_messsages <- list_messagesInRoom_apiFun(
-    query=list(
-      limit=100
-    )
+    query=queryList
   )
 
 }
@@ -158,6 +157,44 @@ get_1message <- function(roomId, messageId){
   apifun <- gitter_apiFunctional(postingMessage)
   apifun()
 }
+# load("/Users/martin/Github/gitterhub/R/courseInfo/course109-1-program4DS.rda")
+# roomId=courseInfo$resources$gitter$roomInfo$id
+# {
+#   postingMessage = "GET /v1/rooms/:roomId/chatMessages"
+#   require(dplyr); library(stringr)
+#   postingMessage %>%
+#     stringr::str_extract_all("(?<=/:)[:alpha:]+(?=/)") -> resources
+#   for(.x in seq_along(resources)){
+#     stringr::str_replace(postingMessage,
+#                          paste0(":",resources[[.x]]),
+#                          paste0("{",resources[[.x]],"}")) -> postingMessage
+#   }
+#   postingMessage <- glue::glue(postingMessage)
+#   list_msgFun <- gitter_apiFunctional(postingMessage)
+#   list_msg <- function(afterId=NULL, beforeId=NULL,...){
+#     case= if(is.null(afterId) && is.null(beforeId)){
+#       "allNull"
+#     } else if(!is.null(afterId) && is.null(beforeId)){
+#       "afterId"
+#     } else if(is.null(afterId) && !is.null(beforeId)){
+#       "beforeId"
+#     } else {
+#       "both"
+#     }
+#     switch(
+#       case,
+#       "allNull"={list_msgFun(...)},
+#       "afterId"={list_msgFun(afterId=afterId,...)},
+#       "beforeId"={list_msgFun(beforeId=beforeId,...)},
+#       "both"={list_msgFun(afterId=afterId, beforeId=beforeId,...)}
+#     )
+#
+#
+#   }
+#
+#
+#
+# }
 
 gitter_apiFunctional <- function(postingMessage){
   split_postingMessage=stringr::str_split(postingMessage,"\\s")
