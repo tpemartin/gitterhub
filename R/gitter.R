@@ -293,7 +293,7 @@ list_compactMessagesInRoom100limit <- function(roomId){
 
   msgsCompact
 }
-getAllMessagesAfterSkippingBeginningMessages = function(skip=0){
+getAllMessagesAfterSkippingBeginningMessages = function(roomId, skip=0){
   require(gitterhub)
   gt <- gitterService()
 
@@ -302,7 +302,7 @@ getAllMessagesAfterSkippingBeginningMessages = function(skip=0){
   #batch, a group of things or people dealt with at the same time or considered similar in type
   batch <- newBatch <-
     gt$list_messagesInRoom100limit(
-      courseInfo$resources$gitter$roomInfo$id
+      roomId
     )
 
   # batch
