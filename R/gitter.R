@@ -37,7 +37,8 @@ gitterService <- function(){
     list_messagesInRoom100limit=list_messagesInRoom100limit,
     get_threadMessagesInRoomFromAMessage=get_threadMessagesInRoomFromAMessage,
     search_messagesInRoom100limit=search_messagesInRoom100limit,
-    list_compactMessagesInRoom100limit=list_compactMessagesInRoom100limit
+    list_compactMessagesInRoom100limit=list_compactMessagesInRoom100limit,
+    skipThenGet_restMessages=getAllMessagesAfterSkippingBeginningMessages
   )
 }
 
@@ -291,4 +292,38 @@ list_compactMessagesInRoom100limit <- function(roomId){
   msgsCompact <- compact_messages(msgs)
 
   msgsCompact
+}
+getAllMessagesAfterSkippingBeginningMessages = function(skip=0){
+  require(gitterhub)
+  gt <- gitterService()
+
+  count=1; max_count=20;
+
+  #batch, a group of things or people dealt with at the same time or considered similar in type
+  batch <- newBatch <-
+    gt$list_messagesInRoom100limit(
+      courseInfo$resources$gitter$roomInfo$id
+    )
+
+  # batch
+
+  # 由於gitter api一次最多抓回100訊息，所以要用迴圈抓完。
+  len_msg=length(newBatch)
+
+  while(len_msg==100 && count<max_count){
+
+    skip = skip+100
+
+    newBatch <-
+      gt$list_messagesInRoom100limit(
+        courseInfo$resources$gitter$roomInfo$id, skip = skip)
+
+    #append, add elements to a vector.
+    batch <- append(batch, newBatch)
+    len_msg=length(newBatch)
+    count=count+1
+  }
+
+  # length(batch)
+  batch
 }
