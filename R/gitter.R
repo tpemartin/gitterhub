@@ -271,12 +271,17 @@ compact_messages <- function(originalMSGs){
   idnames <- vector("list", length(group_index_unique))
   messageIds <- vector("list", length(group_index_unique))
   textContent <- vector("character", length(group_index_unique))
+  htmlContent <- vector("character", length(group_index_unique))
   for(.x in group_index_unique){
     whichBelong2Index <- which(group_index==group_index_unique[[.x]])
     validPosts[[.x]] <- originalMSGs[whichBelong2Index]
     validPosts[[.x]] %>%
       purrr::map(~.x$text) %>%
       purrr::reduce(paste, collpase="\n") -> textContent[[.x]]
+    validPosts[[.x]] %>%
+      purrr::map(~.x$html) %>%
+      purrr::reduce(paste, collpase="\n") -> htmlContent[[.x]]
+
     idnames[[.x]] <- originalMSGs[[whichBelong2Index[[1]]]]$fromUser[c("id", "username","displayName","avatarUrlSmall")]
     messageIds[[.x]] <- purrr::map_chr(originalMSGs[whichBelong2Index], ~.x$id)
   }
@@ -287,6 +292,7 @@ compact_messages <- function(originalMSGs){
     avatar=purrr::map_chr(idnames, ~.x[[4]]),
     messageIds=messageIds,
     text=textContent,
+    html=htmlContent,
     messages=validPosts
   ) -> compactMessage
   compactMessage
