@@ -29,6 +29,7 @@ gitterService <- function(){
   list(
     list_groups=gitter_apiFunctional("GET /v1/groups"),
     list_groupsAsDataframe=list_groupsAsDataframe,
+    list_allMyRooms=list_allMyRooms,
     list_roomsUnderAGroup=list_roomsUnderAGroup,
     list_roomsUnderAGroupAsDataFrame=
       list_roomsUnderAGroupAsDataFrame,
@@ -61,6 +62,23 @@ list_usersInARoom_apiFun <- function(roomId){
     roomId
   ) -> postingMessage
   gitter_apiFunctional(postingMessage)
+}
+# userId="577681aec2f0db084a20f711"
+list_channelsOfAUser <- function(userId){
+  stringr::str_replace(
+    "GET /v1/user/:userId/channels",
+    ":userId",
+    userId
+  ) -> postingMessage
+  list_channelsOfAUserFun <- gitter_apiFunctional(postingMessage)
+  list_channelsOfAUserFun()
+
+}
+
+list_allMyRooms <- function(){
+  "GET /v1/rooms" -> postingMessage
+  list_allRoomsOfAUserFun <- gitter_apiFunctional(postingMessage)
+  list_allRoomsOfAUserFun()
 }
 
 list_usersInARoom <- function(roomId){
