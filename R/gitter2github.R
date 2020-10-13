@@ -23,12 +23,23 @@ extractPrivateGitterChatMessage <- function(){
   compactMsg1 <- compact_messages(msg1)
   # View(compactMsg1$html)
 
-  compactMsg1$text %>% stringr::str_which(inputText[[2]]) ->
+  # find text that fits description
+  compactMsg1$text %>% stringr::str_which(
+    stringr::coll(inputText[[2]])) ->
     beginRow
+  if(length(beginRow)>1){
+    choice <-
+      whichIsYourChoice(compactMsg1$text[beginRow])
+    beginRow <- beginRow[[choice]]
+  }
   endingText <- rstudioapi::showPrompt(title="Ending Text",message="Please copy and paste the ending sentence:")
   compactMsg1$text %>% stringr::str_which(endingText) ->
     endRow
-
+  if(length(endRow)>1){
+    choice <-
+      whichIsYourChoice(compactMsg1$text[endRow])
+    endRow <- endRow[[choice]]
+  }
   compactMsg1Selected <- compactMsg1[beginRow:endRow,]
   # compactMsg1Selected %>% View()
 
@@ -45,4 +56,17 @@ extractPrivateGitterChatMessage <- function(){
   message(
     "Your content is in your clipboard now."
   )
+
+  invisible(htmlConcatenated)
+}
+
+# helpers -----------------------------------------------------------------
+
+
+whichIsYourChoice <- function(context){
+  message('There is more than one possibility:')
+  paste0(seq_along(context),": ",context) -> options
+  cat(options, sep="\n")
+  choice=readline(prompt = "which one is your choice? ")
+  return(as.integer(choice))
 }
