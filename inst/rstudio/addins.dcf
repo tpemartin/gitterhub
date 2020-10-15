@@ -1,0 +1,5 @@
+Name: Extract private gitter chat
+Description: New Addin Description
+Binding: extractPrivateGitterChatMessage
+Interactive: false
+
