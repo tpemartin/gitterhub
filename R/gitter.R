@@ -82,20 +82,22 @@ list_allMyRooms <- function(){
 }
 
 list_usersInARoom <- function(roomId){
-  list_30usersInARoom <- list_usersInARoom_apiFun(roomId)
+  list_usersInARoomFun <- list_usersInARoom_apiFun(roomId)
 
-  allusers <- newusers <- list_30usersInARoom(
+  allusers <- newusers <- list_usersInARoomFun(
     query=list(
-      skip=0
+      skip=0,
+      limit=100
     )
   )
   count=0; max_count=10
-  while(length(allusers)==30 && count <= max_count){
+  while(length(allusers)==100 && count <= max_count){
     count=count+1
-    skip=count*30
-    newusers <- list_30usersInARoom(
+    skip=count*100
+    newusers <- list_usersInARoomFun(
       query=list(
-        skip=skip
+        skip=skip,
+        limit=100
       )
     )
     allusers <- append(allusers, newusers)
