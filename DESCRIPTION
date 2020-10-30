@@ -1,7 +1,7 @@
 Package: gitterhub
 Type: Package
 Title: What the Package Does (Title Case)
-Version: 0.1.4
+Version: 0.1.5
 Author: Martin Lin <mtlin@gm.ntpu.edu.tw> Alex Chen <s410373092@gm.ntpu.edu.tw>
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: More about what it does (maybe more than one line)

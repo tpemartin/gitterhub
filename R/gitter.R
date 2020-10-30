@@ -39,7 +39,9 @@ gitterService <- function(){
     get_threadMessagesInRoomFromAMessage=get_threadMessagesInRoomFromAMessage,
     search_messagesInRoom100limit=search_messagesInRoom100limit,
     list_compactMessagesInRoom100limit=list_compactMessagesInRoom100limit,
-    skipThenGet_restMessages=getAllMessagesAfterSkippingBeginningMessages
+    skipThenGet_restMessages=getAllMessagesAfterSkippingBeginningMessages,
+    create_aPrivateRoomUnderGroup=create_aPrivateRoomUnderGroup,
+    get_userProfile=get_userProfile_gitter
   )
 }
 
@@ -352,4 +354,9 @@ getAllMessagesAfterSkippingBeginningMessages = function(roomId, skip=0){
 
   # length(batch)
   batch
+}
+get_userProfile_gitter <- function(){
+
+  get_userFun <- gitter_apiFunctional("GET /v1/user")
+  get_userFun()
 }

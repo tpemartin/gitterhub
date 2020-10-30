@@ -19,7 +19,8 @@ githubService <- function(){
     get_repoForks=get_repoForks,
     choose_courseRepoFromLatest30=choose_courseRepoFromLatest30,
     list_issues=list_issues,
-    create_issue=create_issue
+    create_issue=create_issue,
+    get_userProfile=get_userProfile_github
 
   )
 
@@ -190,6 +191,18 @@ create_issue <- function(owner, repo, .title, .body, ...){
       ), auto_unbox = T
     ))
 }
+
+getUserRepos <- function(username, ...){
+  postingMessage = glue::glue("GET /user/repos")
+  requestFun <- github_apiFunctionalOnePage(postingMessage)
+  requestFun(...)
+}
+
+get_userProfile_github <- function(){
+  requestFun <- github_apiFunctionalOnePage("GET /user")
+  requestFun()
+}
+
 # .title="test gitter-repost"
 # .body="[![image.png](https://files.gitter.im/5f60610fd73408ce4feee869/vSEg/thumb/image.png)](https://files.gitter.im/5f60610fd73408ce4feee869/vSEg/image.png) Your name is: library(econDS); setup() \n 老師 請問我名字打錯的話 有方法可以再重打一次嗎 \n"
 # create_issue(owner,repo, .title, .body, labels=list("gitter"))
