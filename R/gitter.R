@@ -41,7 +41,8 @@ gitterService <- function(){
     list_compactMessagesInRoom100limit=list_compactMessagesInRoom100limit,
     skipThenGet_restMessages=getAllMessagesAfterSkippingBeginningMessages,
     create_aPrivateRoomUnderGroup=create_aPrivateRoomUnderGroup,
-    get_userProfile=get_userProfile_gitter
+    get_userProfile=get_userProfile_gitter,
+    delete_aRoom=delete_aRoom
   )
 }
 
@@ -359,4 +360,9 @@ get_userProfile_gitter <- function(){
 
   get_userFun <- gitter_apiFunctional("GET /v1/user")
   get_userFun()
+}
+delete_aRoom <- function(roomId){
+  postingMessage <- glue::glue("DELETE v1/rooms/{roomId}")
+  delete_roomFun <- gitter_apiFunctional(postingMessage)
+  delete_roomFun()
 }

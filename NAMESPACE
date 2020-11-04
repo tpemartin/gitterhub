@@ -2,6 +2,7 @@
 
 export(create_aPrivateRoomUnderGroup)
 export(extractPrivateGitterChatMessage)
+export(getUserEvents_afterTime)
 export(githubService)
 export(gitterService)
 export(gitter_oauth)
