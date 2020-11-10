@@ -61,7 +61,30 @@ rootEndpoints <- function(platformName){
   )
 
 }
+github_apiFunctionalOnePageRaw <- function(postingMessage){
+  split_postingMessage=stringr::str_split(postingMessage,"\\s")
+  VERB=split_postingMessage[[1]][[1]]
+  path=split_postingMessage[[1]][[2]]
+  VERB=as.name(VERB)
+  require("httr")
+  endpoint=rootEndpoints("github")
+  function(...){
+    requestExpr=rlang::quo({
+      loadNamespace("httr")
+      (!!VERB)(
+        url=endpoint,
+        path=path,
+        config=httr::config(token=github_oauth()),...
+      )
+    })
 
+    response <- rlang::eval_tidy(
+      requestExpr
+    )
+
+    response
+  }
+}
 github_apiFunctionalOnePage <- function(postingMessage){
   split_postingMessage=stringr::str_split(postingMessage,"\\s")
   VERB=split_postingMessage[[1]][[1]]
@@ -138,6 +161,8 @@ upload2fork <- function(owner,repo,path,commitMessage, filename){
 }
 
 get_user <- github_apiFunctionalOnePage("GET /user")
+
+get_me <- github_apiFunctionalOnePageRaw("GET /users/me")
 # GET /repos/:owner/:repo/forks
 get_repoForks_apiFun <- function(owner, repo){
   requestFun <- github_apiFunctionalOnePage(
