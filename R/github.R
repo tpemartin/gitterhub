@@ -198,10 +198,35 @@ list_reposOfAUser <- function(username){
 # owner="tpemartin"
 # repo="course-programming-for-data-science"
 # myIssues <- list_issues(owner, repo)
-list_issues <- function(owner, repo){
+list_issues <- function(owner, repo, ...){
   postingMessage=glue::glue("GET /repos/{owner}/{repo}/issues")
   github_apiFunctionalOnePage(postingMessage) -> list_issuesFun
-  list_issuesFun()
+  list_issuesFun(...)
+}
+#' Get issue with get_comments method attached
+#'
+#' @param owner A character of owner
+#' @param repo A character of repo name
+#' @param issue_number A character of issue number
+#' @param ... other query parameters
+#'
+#' @return A list of response where element comments_url has get_comments method attached.
+#' @export
+#'
+#' @examples none
+get_issueWithGetCommentsAttached <- function(owner, repo, issue_number, ...){
+  postingMessage=glue::glue("GET /repos/{owner}/{repo}/issues/{issue_number}")
+  gitterhub:::github_apiFunctionalOnePage(postingMessage) -> get_issueFun
+  response <- get_issueFun(...)
+
+  postingMessage <- str_replace(response[["comments_url"]], "https://api.github.com","GET ")
+  gitterhub:::github_apiFunctionalOnePage(postingMessage) -> get_commentsFun
+
+  response$comments_url <- list(
+    url = response$comments_url,
+    get_comments = get_commentsFun
+  )
+  response
 }
 
 create_issue <- function(owner, repo, .title, .body, ...){

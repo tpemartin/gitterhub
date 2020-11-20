@@ -3,6 +3,7 @@
 export(create_aPrivateRoomUnderGroup)
 export(extractPrivateGitterChatMessage)
 export(getUserEvents_afterTime)
+export(get_issueWithGetCommentsAttached)
 export(githubService)
 export(gitterService)
 export(gitter_oauth)

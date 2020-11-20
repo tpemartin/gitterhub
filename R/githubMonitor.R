@@ -6,7 +6,7 @@
 #' @return A list of possible events that fit the criterion
 #' @export
 #'
-#' @examples
+#' @examples none
 getUserEvents_afterTime <- function(username, startTime){
   if(!is.POSIXct(startTime) || !is.POSIXt(startTime)){
     stop("startTime must be a Date/Time class")
