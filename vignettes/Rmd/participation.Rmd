@@ -1,0 +1,59 @@
+---
+title: "Participation"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+gt <- gitterService()
+myRooms <- gt$list_allMyRooms()
+purrr::keep(
+  myRooms, function(.x) stringr::str_detect(.x$name , "109-1-programming-for-DS")
+)[[1]] -> targetChatroom
+
+endDate <- lubridate::ymd_hms("2020-09-01 00:00:00", tz="Asia/Taipei")
+Xmessages <- gt$list_messagesInRoom100limit(targetChatroom$id)
+flag_continuation <- T
+count <- 0
+maxCount <- 20
+message("message retrieving....\n")
+while(flag_continuation && count <= maxCount){
+  count=count+1
+  try(
+    Xmessages[[1]]$id, silent=T) -> XBeforeId
+  if(is(XBeforeId,"try-error")) {
+    message('the loop ends')
+    break
+  }
+  gt$list_messagesInRoom100limit(targetChatroom$id, beforeId=XBeforeId) -> nextXmessages
+  append(nextXmessages, Xmessages) -> Xmessages
+  lubridate::ymd_hms(nextXmessages[[1]]$sent) -> XstartDate
+  flag_continuation <- (XstartDate >= endDate)
+  cat(glue::glue('count: {count}\t {XstartDate}\n\n'))
+}
+compactMessages <- gitterhub::compact_messages(Xmessages)
+
+gitterMessages <- list(
+  compact_messages=compactMessages,
+  detail_messages=Xmessages
+)
+jsontempfile <- 
+  file.path(tempdir(),"participation_gitter.json")
+xfun::write_utf8(
+  jsonlite::toJSON(gitterMessages),
+  con=jsontempfile
+)
+dribble = googledrive::as_dribble("https://drive.google.com/drive/u/1/folders/1UlSeBl6y3XxW3gegNbqqP8IyQ5WtYnTK")
+googledrive::drive_upload(
+  jsontempfile,
+  path=dribble, 
+  overwrite = T
+)
+```
+
+```{r}
+```
+
